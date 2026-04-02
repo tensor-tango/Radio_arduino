@@ -10,12 +10,12 @@ TM1637Display display(2, 3);
 #define BTN_UP   A0
 #define BTN_DOWN A1
 
-// ====== RADIO ======
+// ====== RADIO WORKING FREQUENCY ======
 float frequency = 87.5;   // MHz
 
 // ====== I2C LOW LEVEL ======
 void i2c_delay() {
-  delayMicroseconds(5);   // ~100 kHz
+  delayMicroseconds(5);   
 }
 
 void i2c_start() {
@@ -61,26 +61,26 @@ bool i2c_writeByte(uint8_t data) {
 // ====== TEA5767 CONTROL ======
 void tea5767_setFrequency(float freq) {
 
-  // PLL calculation (datasheet)
+  
   uint16_t pll = (uint16_t)((4.0 * (freq + 0.225)) / 0.032768);
 
   uint8_t data[5];
 
-  data[0] = (pll >> 8) & 0x3F;   // PLL high (6 bits)
-  data[1] = pll & 0xFF;          // PLL low
-  data[2] = 0xB0;                // Stereo ON, no mute
-  data[3] = 0x10;                // XTAL = 32.768 kHz
-  data[4] = 0x00;                // No standby, no soft mute
+  data[0] = (pll >> 8) & 0x3F;   
+  data[1] = pll & 0xFF;          
+  data[2] = 0xB0;                
+  data[3] = 0x10;                
+  data[4] = 0x00;                
 
   i2c_start();
-  i2c_writeByte(0x60 << 1);      // TEA5767 write address
+  i2c_writeByte(0x60 << 1);      // TEA5 address
   for (uint8_t i = 0; i < 5; i++) {
     i2c_writeByte(data[i]);
   }
   i2c_stop();
 }
 
-// ====== SETUP ======
+
 void setup() {
   pinMode(SDA, OUTPUT);
   pinMode(SCL, OUTPUT);
@@ -95,7 +95,7 @@ void setup() {
   display.showNumberDec(station, true);
 }
 
-// ====== LOOP ======
+
 void loop() {
 
   if (digitalRead(BTN_UP) == LOW) {
